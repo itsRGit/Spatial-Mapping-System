@@ -4,7 +4,7 @@
 Please refer to the Project Report pdf for more details.
 </i></p>
 
-## **Project Overview**
+## 📌 **Project Overview**
 
 ---
 
@@ -19,21 +19,22 @@ Please refer to the Project Report pdf for more details.
 
 &nbsp;&nbsp;&nbsp;&nbsp;The MOT-28BYJ48 Stepper Motor, connected to a 5V input voltage and Port H, is also used in the design configuration to rotate the ToF sensor a complete 360° revolution. Speaking of which, the VL53LIX Time-of-Flight sensor is used to measure distance using LIDAR technology. It calculates the amount of time a photon of light takes to bounce off of an object and be reflected back; and from this time measurement the distance can further be calculated. The sensor as mentioned previously will be attached the stepper motor and take measurements every 45°.
 
-## **Built Using**
+## 🛠️ **Built Using**
 ---
+
 - <b>Python:</b> OpenGL library, Pyserial 
 - <b>C:</b> Extracting Distance Measurements, I2C and UART Communication
 - <b>Assembly:</b> System Clock Setting, Port Configurations
 - <b>MCU:</b> SimpleLink MSP432E401Y Microcontroller
 - <b>Hardware:</b> Stepper Motor, Time of Flight Sensor, Breadboard, Resistors
 
-## **Block Diagram**
+## 📝 **Block Diagram**
 ---
 <p align="center">
 <img width="800" alt="Block Diagram" src="https://user-images.githubusercontent.com/113951482/212814075-86b92ad7-0976-4f54-8ec0-a18579ab3380.png">
 </p>
 
-## **Setup**
+## 🧰 **Setup**
 ---
 ![IMG-3488](https://user-images.githubusercontent.com/113951482/212814314-1c5d877a-dcea-4651-905c-546c7f99b70f.jpg)
 <p align="center"><i>
@@ -47,7 +48,7 @@ Please refer to the Project Report pdf for more details.
 <b>Figure 2: </b> Cardboard box used as a makeshift hallway.
 </i></p>
 
-## **Hallway Reconstruction Render**
+## 🖨️ **Hallway Reconstruction Render**
 ---
 <p align="center">
 <img width="500" alt="Hallway Reconstruction Render" src="https://user-images.githubusercontent.com/113951482/212817259-7f25f4ca-1cd7-4e93-8fe8-e58fd874ee7c.png">
@@ -57,7 +58,7 @@ Please refer to the Project Report pdf for more details.
 </i></p>
 As seen above, the figure shows all the axis planes. The x plane (displacement) is representative of the device moving forward, while the y and z planes (spatial) are vertical slices which the sensor reads.
 
-## **Circuit Schematic**
+## 📑 **Circuit Schematic**
 ---
 <p align="center">
 <img width="500" alt="Circuit Schematic" src="https://user-images.githubusercontent.com/113951482/212819508-5d9a45f1-82ae-443b-83cf-2476e87935d4.png">
@@ -66,7 +67,7 @@ As seen above, the figure shows all the axis planes. The x plane (displacement) 
 <b>Figure 4: </b> Circuit Schematic
 </i></p>
 
-## **Programming Logic Flow**
+## 🧩 **Programming Logic Flow**
 ---
 <p align="center">
 <img width="500" alt="Programming Logic Flow" src="https://user-images.githubusercontent.com/113951482/212819721-137b8ef2-7ca6-40e8-922b-3e1f74cc40f6.png">
@@ -75,7 +76,7 @@ As seen above, the figure shows all the axis planes. The x plane (displacement) 
 <b>Figure 5: </b> Programming Logic Flowchart for MCU and Python Code
 </i></p>
 
-## **Code Snippets**
+## 💻 **Code Snippets**
 ---
 ### <b>Port Initialization for Push Button:</b>
 ```assembly
