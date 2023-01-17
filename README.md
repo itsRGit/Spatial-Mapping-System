@@ -1,6 +1,6 @@
 # **COMPENG 2DX4 Final Project:** Spacial Mapping System 
 
-<p align="center"><i>
+<p align="right"><i>
 Please refer to the Project Report pdf for more details.
 </i></p>
 
@@ -9,7 +9,7 @@ Please refer to the Project Report pdf for more details.
 ---
 
 ### **The Challenge**
-- Design and build an embedded spatial measurement system using a time-of-flight sensor to acquire information about the area around you. Using a rotary mechanism to provide a 360 degree measurement of distance within a single vertical geometric plane (e.g., y-z).
+- Design and build an embedded spatial measurement system using a time-of-flight (ToF) sensor to acquire information about the area around you. Using a rotary mechanism to provide a 360 degree measurement of distance within a single vertical geometric plane (e.g., y-z).
 - Ensure that the mapped spatial information is stored in onboard memory and later communicated to a personal computer or web application for reconstruction and graphical presentation.
 
 ### **General Description of my Design**
@@ -66,8 +66,7 @@ As seen above, the figure shows all the axis planes. The x plane (displacement) 
 
 ## **Code Snippets**
 ---
-### <b>Port Initialization</b>
-
+### <b>Port Initialization for Push Button:</b>
 ```assembly
 void PortJ_Init(void){ // For onboard push button, PJ1, to record measurements (input)
 	SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R8;					// activate clock for Port J
@@ -78,5 +77,127 @@ void PortJ_Init(void){ // For onboard push button, PJ1, to record measurements (
 	GPIO_PORTJ_PCTL_R &= ~0x000000F0;	 								//  configure PJ1 as GPIO 
 	GPIO_PORTJ_AMSEL_R &= ~0x02;											//  disable analog functionality on PJ1		
 	GPIO_PORTJ_PUR_R |= 0x02;													//	enable weak pull up resistor
+}
+```
+
+### <b>Initialization of I2C Protocols to be able to Communicate with the ToF Sensor:</b>
+```assembly
+void I2C_Init(void){ // For initializing ToF sensor 
+  SYSCTL_RCGCI2C_R |= SYSCTL_RCGCI2C_R0;           													// activate I2C0
+  SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R1;          												// activate port B
+  while((SYSCTL_PRGPIO_R&0x0002) == 0){};																		// ready?
+
+    GPIO_PORTB_AFSEL_R |= 0x0C;           																	// 3) enable alt funct on PB2,3       0b00001100
+    GPIO_PORTB_ODR_R |= 0x08;             																	// 4) enable open drain on PB3 only
+
+    GPIO_PORTB_DEN_R |= 0x0C;             																	// 5) enable digital I/O on PB2,3
+//    GPIO_PORTB_AMSEL_R &= ~0x0C;          																// 7) disable analog functionality on PB2,3
+
+                                                                            // 6) configure PB2,3 as I2C
+//  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFFFF00FF)+0x00003300;
+  GPIO_PORTB_PCTL_R = (GPIO_PORTB_PCTL_R&0xFFFF00FF)+0x00002200;    //TED
+    I2C0_MCR_R = I2C_MCR_MFE;                      													// 9) master function enable
+    I2C0_MTPR_R = 0b0000000000000101000000000111011;                       	// 8) configure for 100 kbps clock (added 8 clocks of glitch suppression ~50ns)
+//    I2C0_MTPR_R = 0x3B;                                        						// 8) configure for 100 kbps clock
+        
+}
+```
+
+### <b>On-Board Port Initialization (serves as an OFF button):</b>
+```assembly
+void PortM_Init(void){ // For STOP push button (uses logic LO setup)
+	//Use PortM pins for output
+	SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R11;				// activate clock for Port M
+	while((SYSCTL_PRGPIO_R&SYSCTL_PRGPIO_R11) == 0){};	// allow time for clock to stabilize
+	GPIO_PORTM_DIR_R |= 0x00	;        								// making PM0 an input  
+  GPIO_PORTM_AFSEL_R &= ~0xFF;     								// disable alt funct on PN0
+  GPIO_PORTM_DEN_R |= 0xFF;        								// enable digital I/O on PN0
+																									
+  GPIO_PORTM_AMSEL_R &= ~0xFF;     								// disable analog functionality on PN0		
+	return;
+}
+```
+
+### <b>Stepper Motor Rotation Functions (using a half-step method):</b>
+```assembly
+void spin_Clockwise()						//function to spin clockwise 45 degrees
+{
+		for(int i=0; i<64; i++){						//one full rotation through full stepping takes 2048 steps
+			GPIO_PORTH_DATA_R = 0b00001001;			//we have four steps in loop and wish to go 1/8 of the way
+			SysTick_Wait10ms(2);								//therefore i = (2048/4)/8 = 64
+			GPIO_PORTH_DATA_R = 0b00000011;
+			SysTick_Wait10ms(2);
+			GPIO_PORTH_DATA_R = 0b00000110;
+			SysTick_Wait10ms(2);
+			GPIO_PORTH_DATA_R = 0b00001100;
+			SysTick_Wait10ms(2);
+	}
+}
+
+void spin_CounterClockwise()						//function to spin clockwise 45 degrees
+{
+		for(int i=0; i<64; i++){						//one full rotation through full stepping takes 2048 steps
+			GPIO_PORTH_DATA_R = 0b00001100;		//therefore 11.25 deg is 64 step
+			SysTick_Wait10ms(2);							//since we're doing 4 steps in the loop we do 64/4=16
+			GPIO_PORTH_DATA_R = 0b00000110;   // ** isn't it just same as CW just diff order? **
+			SysTick_Wait10ms(2);
+			GPIO_PORTH_DATA_R = 0b00000011;
+			SysTick_Wait10ms(2);
+			GPIO_PORTH_DATA_R = 0b00001001;
+			SysTick_Wait10ms(2);
+		}
+}
+```
+
+### <b>Extracting the Distance Measurements Using I2C and UART Communication Protocols:</b>
+```assembly
+	// Get the Distance Measures 50 times
+	int counter = 0;		
+
+	while(counter < 3){
+		
+		if(GPIO_PORTJ_DATA_R == 0b00000000){
+			counter++;
+			for(int i = 0; i < 8; i++) {
+				
+				if((GPIO_PORTM_DATA_R&0b00000001)==0){ //STOP BUTTON: if pressed output 0, breaks loop
+					counter = 10;
+          break;
+        }else{
+        }
+				//5) wait until the ToF sensor's data is ready
+				while (dataReady == 0){
+					status = VL53L1X_CheckForDataReady(dev, &dataReady);
+					FlashLED3(1); //Assigned LED D3 blinks
+					VL53L1_WaitMs(dev, 5);
+				}
+				dataReady = 0;
+				status = VL53L1X_GetDistance(dev, &Distance);					//The Measured Distance value (&Distance) 
+
+				if(direction%2==0){ //to avoid tangling
+					spin_Clockwise();	
+				}else {
+					spin_CounterClockwise(); 
+				}
+				
+
+				status = VL53L1X_ClearInterrupt(dev); /*clear interrupt has to be called to enable next interrupt*/
+				
+				// print the resulted readings to UART
+				sprintf(printf_buffer,"%u\n",Distance);
+				UART_printf(printf_buffer);
+				SysTick_Wait10ms(50);
+						
+			}
+		}else{
+			SysTick_Wait10ms(50);
+		}
+		
+		direction++;
+
+	}
+	VL53L1X_StopRanging(dev);
+  while(1) {}
+
 }
 ```
