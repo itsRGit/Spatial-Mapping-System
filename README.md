@@ -1,6 +1,6 @@
 # **COMPENG 2DX4 Final Project:** Spacial Mapping System 
 
-<p align="right"><i>
+<p align="left"><i>
 Please refer to the Project Report pdf for more details.
 </i></p>
 
@@ -29,7 +29,9 @@ Please refer to the Project Report pdf for more details.
 
 ## **Block Diagram**
 ---
+<p align="center">
 <img width="800" alt="Block Diagram" src="https://user-images.githubusercontent.com/113951482/212814075-86b92ad7-0976-4f54-8ec0-a18579ab3380.png">
+</p>
 
 ## **Setup**
 ---
@@ -45,9 +47,11 @@ Please refer to the Project Report pdf for more details.
 <b>Figure 2: </b> Cardboard box used as a makeshift hallway.
 </i></p>
 
-## **Hallway Reconstruction Renders**
+## **Hallway Reconstruction Render**
 ---
-![Picture2](https://user-images.githubusercontent.com/113951482/212817259-7f25f4ca-1cd7-4e93-8fe8-e58fd874ee7c.png)
+<p align="center">
+<img width="500" alt="Hallway Reconstruction Render" src="https://user-images.githubusercontent.com/113951482/212817259-7f25f4ca-1cd7-4e93-8fe8-e58fd874ee7c.png">
+</p>
 <p align="center"><i>
 <b>Figure 3: </b> Open3D (Python OpenGL library) render including dimensions.
 </i></p>
@@ -55,14 +59,21 @@ As seen above, the figure shows all the axis planes. The x plane (displacement) 
 
 ## **Circuit Schematic**
 ---
-![Picture3](https://user-images.githubusercontent.com/113951482/212819508-5d9a45f1-82ae-443b-83cf-2476e87935d4.png)
+<p align="center">
+<img width="500" alt="Circuit Schematic" src="https://user-images.githubusercontent.com/113951482/212819508-5d9a45f1-82ae-443b-83cf-2476e87935d4.png">
+</p>
 <p align="center"><i>
 <b>Figure 4: </b> Circuit Schematic
 </i></p>
 
 ## **Programming Logic Flow**
 ---
-![Untitled Diagram drawio (15)](https://user-images.githubusercontent.com/113951482/212819721-137b8ef2-7ca6-40e8-922b-3e1f74cc40f6.png)
+<p align="center">
+<img width="500" alt="Programming Logic Flow" src="https://user-images.githubusercontent.com/113951482/212819721-137b8ef2-7ca6-40e8-922b-3e1f74cc40f6.png">
+</p>
+<p align="center"><i>
+<b>Figure 5: </b> Programming Logic Flowchart for MCU and Python Code
+</i></p>
 
 ## **Code Snippets**
 ---
