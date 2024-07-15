@@ -1,4 +1,4 @@
-# **COMPENG 2DX4 Final Project:** Spacial Mapping System 
+# **COMPENG 2DX4 Final Project:** Spatial Mapping System 
 
 <p align="left"><i>
 Please refer to the Project Report pdf for more details.
